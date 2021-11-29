@@ -1,24 +1,44 @@
-import logo from './logo.svg';
 import './App.css';
+import Header from './components/Header';
+import AddTimeSlot from './components/AddTimeSlot'
+import TimeSlotList from './components/TimeSlotList';
+import { Switch, Route, BrowserRouter, Redirect } from "react-router-dom";
+import useLocalStorage from './hooks/useLocalStorage';
+import EditTimeSlot from './components/EditTimeSlot';
 
 function App() {
+  const [activities, setActivities] = useLocalStorage('activities', []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <div>
+        <Header />
+        <div className="main-content">
+          <Switch>
+            <Route 
+              render={(props)=>(
+                <TimeSlotList {...props} activities={activities} setActivities={setActivities}/>
+              )}
+              path="/"
+              exact={true}
+            />
+            <Route 
+              render={(props)=>(
+                <AddTimeSlot {...props} activities={activities} setActivities={setActivities}/>
+              )}
+              path="/add-timeslot"
+            />
+            <Route
+              render={(props) => (
+              <EditTimeSlot {...props} activities={activities} setActivities={setActivities} />
+              )}
+              path="/edit/:id"
+            />
+            <Route component={() => <Redirect to="/" />} />
+          </Switch>
+        </div>
+      </div>
+    </BrowserRouter>
+   
   );
 }
 
